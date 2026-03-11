@@ -11,9 +11,11 @@
   "dependencies": {
     "@tabler/icons-vue": "^3.40.0",
     "@vueuse/core": "^14.2.1",
+    "nanoid": "^5.1.6",
     "pinia": "^3.0.4",
     "simplify-path": "^1.1.0",
-    "vue": "^3.5.25"
+    "vue": "^3.5.25",
+    "vue-color": "^3.3.3"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
