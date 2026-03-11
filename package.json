@@ -9,8 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ionited/tooltip-vue": "^0.1.7",
     "@tabler/icons-vue": "^3.40.0",
     "@vueuse/core": "^14.2.1",
+    "dashvar": "^0.4.3",
     "nanoid": "^5.1.6",
     "pinia": "^3.0.4",
     "simplify-path": "^1.1.0",

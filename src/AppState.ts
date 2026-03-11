@@ -7,7 +7,7 @@ export const useAppState = defineStore('appState', {
         var baseId = nanoid()
         var s: AppState = {
             sketch: {
-                aspectRatio: 2,
+                aspectRatio: 1,
                 frames: [{
                     id: baseId,
                     position: 0,

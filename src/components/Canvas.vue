@@ -5,11 +5,12 @@ import { clamp01, getPointerPositionRelative, optimizePoints, pathToSVG } from '
 import { useEventListener } from '@vueuse/core';
 
 const EFFECT_STRENGTH = 0.1;
+const SCREEN_DIMENSION = 600;
 //defineProps<{ msg: string }>()
 const appState = useAppState();
 const relativeHeight = computed(() => appState.sketch.aspectRatio);
-const actualWidth = 400;
-const actualHeight = computed(() => 400 * relativeHeight.value);
+const actualWidth = computed(() => appState.sketch.aspectRatio < 1 ? SCREEN_DIMENSION / appState.sketch.aspectRatio : SCREEN_DIMENSION);
+const actualHeight = computed(() => actualWidth.value * relativeHeight.value);
 const viewBox = computed(() => `0 0 1 ${relativeHeight.value}`)
 
 const svg = useTemplateRef('svg')
@@ -17,6 +18,7 @@ const newLine = reactive<number[]>([])
 const mousePosition = reactive<{ x: number, y: number }>({ x: 0, y: 0 })
 const isMouseDown = ref<boolean>(false);
 const actualStrength = computed(() => appState.mode === "view" ? EFFECT_STRENGTH : 0)
+const actualScale = computed(() => appState.mode === "view" ? 1 : 0)
 
 const pointerDown = (e: PointerEvent) => {
   isMouseDown.value = true;
@@ -82,8 +84,11 @@ useEventListener("pointerup", pointerUp)
 <template>
   <svg ref="svg" class="canvas" :viewBox="viewBox" :width="actualWidth" :height="actualHeight"
     @pointerdown="pointerDown">
-    <g v-for="layer in appState.sketch.frames"
-      :style="{ transform: `translate(${actualStrength * mousePosition.x * layer.position}px, ${actualStrength * mousePosition.y * layer.position}px)` }">
+    <g v-for="layer in appState.sketch.frames" :style="{
+      transformOrigin: ` 50% 50%`, transform: ` scale(${(1 +
+        Math.abs(layer.position * actualStrength * 2))})translate(${actualStrength * mousePosition.x * layer.position}px,
+      ${actualStrength * mousePosition.y * layer.position}px)`
+    }">
       <path v-for="(line, lineIndex) in layer.lines" @click="eraseLine(lineIndex, layer.id)"
         @pointerenter="eraseLine(lineIndex, layer.id, !isMouseDown)" :d="pathToSVG(line.points)" fill="none"
         :stroke="line.color" :stroke-width="line.weight" stroke-linecap="round" stroke-linejoin="round" />
@@ -97,8 +102,8 @@ useEventListener("pointerup", pointerUp)
 
 <style scoped>
 .canvas {
-  border: 2px solid red;
+  border: 2px solid var(--gray-900);
   background:
-    repeating-conic-gradient(#808080 0 25%, #0000 0 50%) 50% / 20px 20px
+    repeating-conic-gradient(#80808088 0 25%, #0000 0 50%) 50% / 32px 32px
 }
 </style>

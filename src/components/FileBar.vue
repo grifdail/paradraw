@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { IconFile } from '@tabler/icons-vue';
+import { IconDownload, IconFile, IconFileExport, IconInfoCircle } from '@tabler/icons-vue';
 import { useAppState } from '../AppState';
 
 //defineProps<{ msg: string }>()
@@ -10,21 +10,36 @@ const randomAspectRatio = () => [1, 1.618033988749894, 1 / 1.618033988749894][Ma
 
 <template>
     <div class="root">
-        <button @click="appState.newSketch(randomAspectRatio())">
+        <button v-tooltip title="New Sketch" @click="appState.newSketch(randomAspectRatio())">
             <IconFile />
         </button>
-
-
-
+        <h1>Paradraw <IconInfoCircle></IconInfoCircle>
+        </h1>
+        <button v-tooltip title="Export (Not yet available)" disabled>
+            <IconDownload />
+        </button>
     </div>
 </template>
 
 
 <style scoped>
 .root {
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    align-self: stretch;
+
     & button {
         aspect-ratio: 1;
-        padding: 10px;
+
+    }
+
+    & h1 {
+        text-align: center;
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: var(--size-03);
+
     }
 }
 </style>

@@ -4,10 +4,13 @@ import App from './App.vue'
 import { createPinia } from 'pinia';
 
 import 'vue-color/style.css';
+import "dashvar/dist/dashvar.css";
+import { tooltip } from '@ionited/tooltip-vue';
 
 const app = createApp(App)
 const pinia = createPinia();
 
 
 app.use(pinia)
+app.directive('tooltip', tooltip);
 app.mount('#app')

@@ -38,9 +38,12 @@ useEventListener("pointerup", (e: PointerEvent) => {
             <div class="bar-visual"></div>
             <div class="label" v-for="frame in appState.sketch.frames" @pointerdown="dragStart(frame.id)"
                 :class="{ visible: frame.visible, selected: appState.editedFrame === frame.id }"
-                :style="{ left: `${(frame.position * 0.5 + 0.5) * 100}%` }"></div>
+                :style="{ left: `${(frame.position * 0.5 + 0.5) * 100}%` }" v-tooltip
+                :title="Math.round(frame.position * 100).toString()"></div>
         </div>
-        <button @click="appState.addFrame()">Add <IconPlus></IconPlus> </button>
+        <button @click="appState.addFrame()" v-tooltip title="Add a new Layer">
+            <IconPlus></IconPlus>
+        </button>
     </div>
 
 </template>
@@ -48,39 +51,84 @@ useEventListener("pointerup", (e: PointerEvent) => {
 
 <style scoped>
 .root {
-    display: flex;
-    flex-direction: column;
+    align-self: stretch;
+    justify-self: stretch;
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    flex-direction: row;
     justify-content: center;
-}
-
-.bar {
-    position: relative;
-    width: 400px;
-    min-height: 50px;
-    padding: 0%;
-    margin: 0;
-    background: rgba(0, 0, 0, 0.1);
+    align-items: center;
     ;
-}
 
-.bar-visual {
-    top: 8px;
-    width: 100%;
-    height: 4px;
-    background: red;
-    position: absolute;
-}
+    gap: var(--size-03);
 
-.label {
-    width: 25px;
-    height: 25px;
-    top: 10px;
-    position: absolute;
-    background: blue;
-    transform: translate(-50%, -50%);
+    --size: var(--size-07);
 
-    &.selected {
-        background: pink;
+    .bar {
+        position: relative;
+        height: var(--size);
+        padding: 0%;
+        margin: 0;
+        border-left: 4px solid var(--green-700);
+        border-right: 4px solid var(--green-700);
+
+        &::before {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: calc(50% - 2px);
+            width: 4px;
+            height: 100%;
+            background: var(--green-800);
+            content: "";
+        }
+
+        .bar-visual {
+            top: calc(50% - 2px);
+            width: 100%;
+            height: 4px;
+            background: var(--green-700);
+            position: absolute;
+        }
+
+        .label {
+            width: var(--size);
+            height: var(--size);
+            border-radius: 50%;
+            top: 0;
+            position: absolute;
+            background: var(--green-800);
+            transform: translate(-50%, 0);
+
+            cursor: pointer;
+
+            &.selected {
+                background: var(--green-200);
+
+
+                &::after {
+                    display: block;
+                    position: absolute;
+                    top: 25%;
+                    left: 25%;
+                    width: 50%;
+                    height: 50%;
+                    background: var(--green-800);
+                    border-radius: 50%;
+                    content: "";
+                }
+            }
+
+
+        }
+    }
+
+
+    & button {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
     }
 }
 </style>
