@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { IconEraser, IconLock, IconLockOpen, IconPencil, IconPlus } from '@tabler/icons-vue';
+import { IconPlus } from '@tabler/icons-vue';
 import { useAppState } from '../AppState';
 import { ref, useTemplateRef } from 'vue';
 import { clamp, getPointerPositionRelative } from '../utils';

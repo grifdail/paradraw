@@ -18,7 +18,6 @@ const newLine = reactive<number[]>([])
 const mousePosition = reactive<{ x: number, y: number }>({ x: 0, y: 0 })
 const isMouseDown = ref<boolean>(false);
 const actualStrength = computed(() => appState.mode === "view" ? EFFECT_STRENGTH : 0)
-const actualScale = computed(() => appState.mode === "view" ? 1 : 0)
 
 const pointerDown = (e: PointerEvent) => {
   isMouseDown.value = true;

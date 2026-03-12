@@ -1,8 +1,7 @@
 ﻿<script setup lang="ts">
-import { IconDownload, IconFile, IconFileExport, IconInfoCircle } from '@tabler/icons-vue';
+import { IconDownload, IconFile } from '@tabler/icons-vue';
 import { useAppState } from '../AppState';
 import DropdownMenu from './DropdownMenu.vue';
-import PopoverPanel from './PopoverPanel.vue';
 import AboutPopup from './AboutPopup.vue'
 
 //defineProps<{ msg: string }>()

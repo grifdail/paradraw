@@ -5,7 +5,6 @@ import ColorButton from './ColorButton.vue'
 
 //defineProps<{ msg: string }>()
 const appState = useAppState();
-const item = appState;
 </script>
 
 <template>
