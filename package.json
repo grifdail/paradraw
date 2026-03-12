@@ -15,6 +15,7 @@
     "dashvar": "^0.4.3",
     "nanoid": "^5.1.6",
     "pinia": "^3.0.4",
+    "pinia-plugin-persistedstate": "^4.7.1",
     "simplify-path": "^1.1.0",
     "vue": "^3.5.25",
     "vue-color": "^3.3.3"

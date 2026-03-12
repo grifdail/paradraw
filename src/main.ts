@@ -6,9 +6,12 @@ import { createPinia } from 'pinia';
 import 'vue-color/style.css';
 import "dashvar/dist/dashvar.css";
 import { tooltip } from '@ionited/tooltip-vue';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 const app = createApp(App)
-const pinia = createPinia();
+
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 
 
 app.use(pinia)

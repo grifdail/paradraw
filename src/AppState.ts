@@ -86,7 +86,8 @@ export const useAppState = defineStore('appState', {
             };
             this.editedFrame = frame.id
         }
-    }
+    },
+    persist: true
 })
 
 export type AppState = {
