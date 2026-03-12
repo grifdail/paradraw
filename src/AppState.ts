@@ -85,6 +85,16 @@ export const useAppState = defineStore('appState', {
                 frames: [frame]
             };
             this.editedFrame = frame.id
+        },
+        loadSketch(sketch: SketchData) {
+
+            this.sketch = sketch;
+            if (sketch.frames.length > 0) {
+
+                this.sortFrames();
+                this.editedFrame = sketch.frames[0]?.id as string
+            }
+
         }
     },
     persist: true

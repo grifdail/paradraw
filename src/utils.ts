@@ -1,5 +1,6 @@
 ﻿import * as simplify from "simplify-path";
 import type { ShallowRef } from "vue";
+import type { SketchData } from "./AppState";
 
 export function optimizePoints(points: number[]): number[] {
     const pointArray = points.reduce(
@@ -47,4 +48,3 @@ export function clamp(value: number, min: number, max: number) {
 export function clamp01(a: number) {
     return Math.min(1, Math.max(0, a))
 }
-

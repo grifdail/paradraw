@@ -3,13 +3,48 @@ import { IconDownload, IconFile } from '@tabler/icons-vue';
 import { useAppState } from '../AppState';
 import DropdownMenu from './DropdownMenu.vue';
 import AboutPopup from './AboutPopup.vue'
+import { saveAs } from 'file-saver';
+import { nanoid } from 'nanoid';
 
 //defineProps<{ msg: string }>()
 const appState = useAppState();
 
-const RATIO_SQUARE = 1;
-const RATIO_LANDSCAPE = 1 / 1.618033988749894;
-const RATIO_PORTRAIT = 1.618033988749894;
+const downloadJson = () => {
+    const json = JSON.stringify(appState.sketch);
+    const blob = new Blob([json], { type: "text/application/json;charset=utf-8" });
+    saveAs(blob, `paradraw_${nanoid()}.json`)
+}
+
+const uploadJson = () => {
+    var input = document.createElement('input');
+    input.type = 'file';
+
+    input.addEventListener("change", (e: Event) => {
+
+        // getting a hold of the file reference
+        var file = input.files?.[0];
+
+        if (file) {
+            // setting up the reader
+            var reader = new FileReader();
+            reader.readAsText(file, 'UTF-8');
+
+            // here we tell the reader what to do when it's done reading...
+            reader.onload = (readerEvent) => {
+                var content = readerEvent.target?.result as string; // this is the content!
+
+                var json = JSON.parse(content);
+                appState.loadSketch(json);
+                console.log(json);
+
+            };
+        }
+
+    });
+
+    input.click();
+
+}
 
 </script>
 
@@ -29,9 +64,19 @@ const RATIO_PORTRAIT = 1.618033988749894;
             <h1>Paradraw</h1>
             <AboutPopup />
         </span>
-        <button v-tooltip title="Export (Not yet available)" disabled>
-            <IconDownload />
-        </button>
+        <DropdownMenu>
+            <template #button-content>
+                <IconDownload v-tooltip title="Export (Not yet available)" />
+            </template>
+            <template #default>
+                <button @click="downloadJson">Download as JSON</button>
+                <button @click="uploadJson">Load from JSON</button>
+                <button disabled @click="appState.newSketch(RATIO_LANDSCAPE)">Export as PNG zip</button>
+                <button disabled @click="appState.newSketch(RATIO_LANDSCAPE)">Export as SVG zip</button>
+                <button disabled @click="appState.newSketch(RATIO_LANDSCAPE)">Export GIF</button>
+                <button disabled @click="appState.newSketch(RATIO_LANDSCAPE)">Export HTML file</button>
+            </template>
+        </DropdownMenu>
     </div>
 </template>
 
