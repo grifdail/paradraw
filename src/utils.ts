@@ -1,6 +1,5 @@
 ﻿import * as simplify from "simplify-path";
 import type { ShallowRef } from "vue";
-import type { SketchData } from "./AppState";
 
 export function optimizePoints(points: number[]): number[] {
     const pointArray = points.reduce(

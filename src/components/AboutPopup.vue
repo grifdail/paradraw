@@ -12,7 +12,7 @@ import PopoverPanel from "./PopoverPanel.vue"
         </template>
         <template #default>
             <p>Hey ! I'm <a href="https://grifdail.fr/">Julien</a> and I made Paradraw.</p>
-            <p>Paradraw is a tiny tool to make drawing with a paralaxe effect</p>
+            <p>Paradraw is a tiny tool to make drawing with a parallax effect</p>
             <p>You can add layer with the "+" button bellow the canvas. Next to that, the slider you can adjust the
                 depth of
                 each layer. That's also where you select which layer you're currently editing.

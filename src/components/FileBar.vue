@@ -6,8 +6,14 @@ import AboutPopup from './AboutPopup.vue'
 import { saveAs } from 'file-saver';
 import { nanoid } from 'nanoid';
 
+const RATIO_SQUARE = 1;
+const RATIO_LANDSCAPE = 1 / 1.618033988749894;
+const RATIO_PORTRAIT = 1.618033988749894;
+
 //defineProps<{ msg: string }>()
 const appState = useAppState();
+
+
 
 const downloadJson = () => {
     const json = JSON.stringify(appState.sketch);
@@ -19,7 +25,7 @@ const uploadJson = () => {
     var input = document.createElement('input');
     input.type = 'file';
 
-    input.addEventListener("change", (e: Event) => {
+    input.addEventListener("change", () => {
 
         // getting a hold of the file reference
         var file = input.files?.[0];
@@ -71,10 +77,10 @@ const uploadJson = () => {
             <template #default>
                 <button @click="downloadJson">Download as JSON</button>
                 <button @click="uploadJson">Load from JSON</button>
-                <button disabled @click="appState.newSketch(RATIO_LANDSCAPE)">Export as PNG zip</button>
-                <button disabled @click="appState.newSketch(RATIO_LANDSCAPE)">Export as SVG zip</button>
-                <button disabled @click="appState.newSketch(RATIO_LANDSCAPE)">Export GIF</button>
-                <button disabled @click="appState.newSketch(RATIO_LANDSCAPE)">Export HTML file</button>
+                <button disabled>Export as PNG zip</button>
+                <button disabled>Export as SVG zip</button>
+                <button disabled>Export GIF</button>
+                <button disabled>Export HTML file</button>
             </template>
         </DropdownMenu>
     </div>

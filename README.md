@@ -2,7 +2,7 @@
 
 Hey ! I'm <a href="https://grifdail.fr/">Julien</a> and I made Paradraw.
 
-Paradraw is a tiny tool to make drawing with a paralaxe effect
+Paradraw is a tiny tool to make drawing with a parallax effect.
 
 ![paradraw screenshot](paradraw.gif)
 
