@@ -5,6 +5,7 @@ import DropdownMenu from './DropdownMenu.vue';
 import AboutPopup from './AboutPopup.vue'
 import { saveAs } from 'file-saver';
 import { nanoid } from 'nanoid';
+import { exportAsPngZip } from '../exports';
 
 const RATIO_SQUARE = 1;
 const RATIO_LANDSCAPE = 1 / 1.618033988749894;
@@ -19,6 +20,10 @@ const downloadJson = () => {
     const json = JSON.stringify(appState.sketch);
     const blob = new Blob([json], { type: "text/application/json;charset=utf-8" });
     saveAs(blob, `paradraw_${nanoid()}.json`)
+}
+
+const downloadPNGs = () => {
+    exportAsPngZip(appState.sketch, `paradraw_png_${nanoid()}.zip`)
 }
 
 const uploadJson = () => {
@@ -52,6 +57,8 @@ const uploadJson = () => {
 
 }
 
+
+
 </script>
 
 <template>
@@ -77,7 +84,7 @@ const uploadJson = () => {
             <template #default>
                 <button @click="downloadJson">Download as JSON</button>
                 <button @click="uploadJson">Load from JSON</button>
-                <button disabled>Export as PNG zip</button>
+                <button @click="downloadPNGs">Export as PNG zip</button>
                 <button disabled>Export as SVG zip</button>
                 <button disabled>Export GIF</button>
                 <button disabled>Export HTML file</button>

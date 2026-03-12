@@ -15,6 +15,7 @@
     "@vueuse/core": "^14.2.1",
     "dashvar": "^0.4.3",
     "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
     "nanoid": "^5.1.6",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
