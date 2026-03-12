@@ -1,5 +1,16 @@
-# Vue 3 + TypeScript + Vite
+# Paradraw !
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Hey ! I'm <a href="https://grifdail.fr/">Julien</a> and I made Paradraw.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+Paradraw is a tiny tool to make drawing with a paralaxe effect
+
+![paradraw screenshot](paradraw.gif)
+
+You can add layer with the "+" button bellow the canvas. Next to that, the slider you can adjust the depth of each layer. That's also where you select which layer you're currently editing.
+
+At the bottom, you can switch between preview, draw and erase mode, as well as change the pen size and color. (I've bundled a few of my favorite color palette, I'll hope you'll like them.)
+
+This tiny app was made in just a few day with VueJs. You can find the source code <a href="https://github.com/grifdail/paradraw">here</a>.
+Everything run in your browser and no data is collected. Absolutely no generative AI or LLM were used in the creation of this app.
+
+Have fun ! ❤️
