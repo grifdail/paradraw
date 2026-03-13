@@ -30,7 +30,7 @@ import PopoverPanel from "./PopoverPanel.vue"
 
 <style lang="css">
 .about-popup.popover {
-    width: 50vw;
+    width: min(90vw, 600px);
     position-anchor: none;
     margin: auto;
     position-area: unset;

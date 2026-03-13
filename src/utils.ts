@@ -27,7 +27,7 @@ export function pathToSVG(points: number[]): string {
     }, [undefined, undefined])[0] as string
 }
 
-export function getPointerPositionRelative(e: PointerEvent, elem: ShallowRef<Element | null>) {
+export function getPointerPositionRelative(e: PointerEvent | MouseEvent, elem: ShallowRef<Element | null>) {
     const rect = elem.value?.getBoundingClientRect();
     if (!rect) {
         return undefined;

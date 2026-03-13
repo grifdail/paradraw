@@ -1,7 +1,8 @@
 ﻿<script setup lang="ts">
-import { IconEraser, IconPencil, IconPlayerPlay } from '@tabler/icons-vue';
+import { IconEraser, IconPencil, IconPencilCog, IconPlayerPlay } from '@tabler/icons-vue';
 import { useAppState } from '../AppState';
 import ColorButton from './ColorButton.vue'
+import DropdownMenu from './DropdownMenu.vue';
 
 //defineProps<{ msg: string }>()
 const appState = useAppState();
@@ -19,9 +20,22 @@ const appState = useAppState();
       <IconEraser />
     </button>
     <hr>
-    <input :disabled="appState.mode !== 'draw'" v-tooltip
-      :title="`Line Weight ${(appState.lineWeight * 100).toFixed(1)}%`" type="range" v-model="appState.lineWeight"
-      min="0" max="0.3" step="0.005" />
+    <DropdownMenu>
+      <template #button-content>
+        <IconPencilCog></IconPencilCog>
+      </template>
+      <template #default>
+        <button @click="appState.lineWeight = 0.005" :class="{ selected: appState.lineWeight === 0.005 }">tiny</button>
+        <button @click="appState.lineWeight = 0.01" :class="{ selected: appState.lineWeight === 0.01 }">small</button>
+        <button @click="appState.lineWeight = 0.02" :class="{ selected: appState.lineWeight === 0.02 }">regular</button>
+        <button @click="appState.lineWeight = 0.04" :class="{ selected: appState.lineWeight === 0.04 }">medium</button>
+        <button @click="appState.lineWeight = 0.08" :class="{ selected: appState.lineWeight === 0.08 }">large</button>
+        <button @click="appState.lineWeight = 0.16" :class="{ selected: appState.lineWeight === 0.16 }">big</button>
+        <button @click="appState.lineWeight = 0.32"
+          :class="{ selected: appState.lineWeight === 0.32 }">humongous</button>
+      </template>
+    </DropdownMenu>
+
     <ColorButton :disabled="appState.mode !== 'draw'" v-tooltip title="Pen Color" v-model="appState.color" />
 
   </div>
@@ -42,5 +56,11 @@ const appState = useAppState();
     background: transparent;
     flex: 1 1;
   }
+
+}
+
+button.selected {
+  font-weight: bold;
+  text-decoration: underline;
 }
 </style>

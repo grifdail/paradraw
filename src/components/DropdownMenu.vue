@@ -37,9 +37,12 @@ const toggle = () => {
     align-items: stretch;
     flex-direction: column;
 
+    min-width: max-content;
+
     &>button {
         background: transparent;
         border: none;
+        box-shadow: none;
 
         &:hover {
             background: rgba(0, 0, 0, 0.5);

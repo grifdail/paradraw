@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { computed, reactive, ref, useTemplateRef } from 'vue'
+import { computed, reactive, ref, useTemplateRef, watch } from 'vue'
 import { useAppState } from '../AppState';
 import { clamp01, getPointerPositionRelative, optimizePoints, pathToSVG } from '../utils';
-import { useEventListener } from '@vueuse/core';
+import { useDeviceOrientation, useEventListener, useWindowSize } from '@vueuse/core';
 
 const EFFECT_STRENGTH = 0.1;
 const SCREEN_DIMENSION = 600;
+const windowSize = useWindowSize();
+const maxWidth = computed(() => Math.min(SCREEN_DIMENSION, windowSize.width.value * 0.9))
 //defineProps<{ msg: string }>()
 const appState = useAppState();
 const relativeHeight = computed(() => appState.sketch.aspectRatio);
-const actualWidth = computed(() => appState.sketch.aspectRatio < 1 ? SCREEN_DIMENSION / appState.sketch.aspectRatio : SCREEN_DIMENSION);
+const actualWidth = computed(() => appState.sketch.aspectRatio < 1 ? Math.min(maxWidth.value / appState.sketch.aspectRatio, maxWidth.value) : maxWidth.value);
 const actualHeight = computed(() => actualWidth.value * relativeHeight.value);
 const viewBox = computed(() => `0 0 1 ${relativeHeight.value}`)
 
@@ -30,7 +32,6 @@ const pointerDown = (e: PointerEvent) => {
 
 
 const pointerMove = (e: PointerEvent) => {
-  updateMousePosition(e)
   const pos = getPointerPosition(e)
   if (pos && newLine.length > 0) {
     newLine.push(pos.x, pos.y)
@@ -40,6 +41,7 @@ const pointerMove = (e: PointerEvent) => {
 const pointerUp = (e: PointerEvent) => {
   isMouseDown.value = false;
   const pos = getPointerPosition(e)
+
   if (pos && newLine.length > 0) {
     newLine.push(pos.x, pos.y)
     const item = newLine.slice();
@@ -58,7 +60,7 @@ const getPointerPosition = (e: PointerEvent) => {
   return pos;
 }
 
-const updateMousePosition = (e: PointerEvent) => {
+const updateMousePosition = (e: MouseEvent) => {
   var pos = getPointerPositionRelative(e, svg);
   if (!pos) {
     return;
@@ -77,12 +79,13 @@ const eraseLine = (line: number, layer: string, cancel: boolean = false) => {
 
 useEventListener("pointermove", pointerMove)
 useEventListener("pointerup", pointerUp)
+useEventListener("mousemove", updateMousePosition)
 
 </script>
 
 <template>
   <svg ref="svg" class="canvas" :viewBox="viewBox" :width="actualWidth" :height="actualHeight"
-    @pointerdown="pointerDown">
+    @pointerdown="pointerDown" :style="{ aspectRatio: appState.sketch.aspectRatio }">
     <g v-for="layer in appState.sketch.frames" :style="{
       transformOrigin: ` 50% 50%`, transform: ` scale(${(1 +
         Math.abs(layer.position * actualStrength * 2))})translate(${actualStrength * mousePosition.x * layer.position}px,
@@ -103,6 +106,6 @@ useEventListener("pointerup", pointerUp)
 .canvas {
   border: 2px solid var(--gray-900);
   background:
-    repeating-conic-gradient(#80808088 0 25%, #0000 0 50%) 50% / 32px 32px
+    repeating-conic-gradient(#80808088 0 25%, #0000 0 50%) 50% / 32px 32px;
 }
 </style>
