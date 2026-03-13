@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed, reactive, ref, useTemplateRef, watch } from 'vue'
 import { useAppState } from '../AppState';
-import { clamp01, getPointerPositionRelative, optimizePoints, pathToSVG } from '../utils';
-import { useDeviceOrientation, useEventListener, useWindowSize } from '@vueuse/core';
+import { clamp, clamp01, getPointerPositionRelative, optimizePoints, pathToSVG } from '../utils';
+import { useDeviceMotion, useDeviceOrientation, useEventListener, useWindowSize } from '@vueuse/core';
+import { time } from 'console';
 
 const EFFECT_STRENGTH = 0.1;
 const SCREEN_DIMENSION = 600;
+const MOUSE_MOVE_COOLDOWN = 1000;
+
 const windowSize = useWindowSize();
 const maxWidth = computed(() => Math.min(SCREEN_DIMENSION, windowSize.width.value * 0.9))
 //defineProps<{ msg: string }>()
@@ -17,7 +20,8 @@ const viewBox = computed(() => `0 0 1 ${relativeHeight.value}`)
 
 const svg = useTemplateRef('svg')
 const newLine = reactive<number[]>([])
-const mousePosition = reactive<{ x: number, y: number }>({ x: 0, y: 0 })
+const mousePosition = reactive<{ x: number, y: number }>({ x: 0, y: 0 });
+const timeLastMouseMove = ref(Date.now())
 const isMouseDown = ref<boolean>(false);
 const actualStrength = computed(() => appState.mode === "view" ? EFFECT_STRENGTH : 0)
 
@@ -32,6 +36,7 @@ const pointerDown = (e: PointerEvent) => {
 
 
 const pointerMove = (e: PointerEvent) => {
+  updateMousePosition(e)
   const pos = getPointerPosition(e)
   if (pos && newLine.length > 0) {
     newLine.push(pos.x, pos.y)
@@ -67,6 +72,9 @@ const updateMousePosition = (e: MouseEvent) => {
   }
   mousePosition.x = clamp01(pos.x) * 2 - 1;
   mousePosition.y = clamp01(pos.y) * 2 - 1;
+  timeLastMouseMove.value = Date.now();
+
+  console.log(timeLastMouseMove)
 }
 
 const eraseLine = (line: number, layer: string, cancel: boolean = false) => {
@@ -75,11 +83,25 @@ const eraseLine = (line: number, layer: string, cancel: boolean = false) => {
   }
 }
 
-
-
 useEventListener("pointermove", pointerMove)
 useEventListener("pointerup", pointerUp)
-useEventListener("mousemove", updateMousePosition)
+//useEventListener("mousemove", updateMousePosition)
+
+const deviceOrientation = useDeviceMotion()
+watch([deviceOrientation.rotationRate, deviceOrientation.isSupported, timeLastMouseMove], ([rotationRate, isSupported, timeLastMouseMove]) => {
+  var now = Date.now();
+  if (isSupported && rotationRate && timeLastMouseMove + MOUSE_MOVE_COOLDOWN < now) {
+    if (rotationRate.beta) {
+      mousePosition.x = clamp(mousePosition.x - rotationRate.beta * 0.001, -1, 1);
+    }
+
+    if (rotationRate.alpha) {
+      mousePosition.y = clamp(mousePosition.y - rotationRate.alpha * 0.001, -1, 1);
+    }
+  }
+
+})
+
 
 </script>
 
