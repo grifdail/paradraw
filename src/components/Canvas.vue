@@ -2,20 +2,41 @@
 import { computed, reactive, ref, useTemplateRef, watch } from 'vue'
 import { useAppState } from '../AppState';
 import { clamp, clamp01, getPointerPositionRelative, optimizePoints, pathToSVG } from '../utils';
-import { useDeviceMotion, useEventListener, useWindowSize } from '@vueuse/core';
+import { useDeviceMotion, useElementBounding, useEventListener, useWindowSize } from '@vueuse/core';
 
 const EFFECT_STRENGTH = 0.1;
 const SCREEN_DIMENSION = 600;
 const MOUSE_MOVE_COOLDOWN = 1000;
 
 const windowSize = useWindowSize();
-const maxWidth = computed(() => Math.min(SCREEN_DIMENSION, windowSize.width.value * 0.9))
-//defineProps<{ msg: string }>()
+const root = useTemplateRef("root")
+const rootSize = useElementBounding(root);
 const appState = useAppState();
-const relativeHeight = computed(() => appState.sketch.aspectRatio);
-const actualWidth = computed(() => appState.sketch.aspectRatio < 1 ? Math.min(maxWidth.value / appState.sketch.aspectRatio, maxWidth.value) : maxWidth.value);
-const actualHeight = computed(() => actualWidth.value * relativeHeight.value);
-const viewBox = computed(() => `0 0 1 ${relativeHeight.value}`)
+const actualDimension = computed(() => {
+  const aspectRatio = appState.sketch.aspectRatio;
+  const isPortrait = aspectRatio > 1;
+  const idealDimension = isPortrait ?
+    { width: SCREEN_DIMENSION, height: SCREEN_DIMENSION * appState.sketch.aspectRatio } :
+    { width: SCREEN_DIMENSION / appState.sketch.aspectRatio, height: SCREEN_DIMENSION };
+  const finalDim = { ...idealDimension };
+  const maxWidth = windowSize.width.value * 0.9;
+  if (finalDim.width > maxWidth) {
+    const scale = maxWidth / finalDim.width;
+    finalDim.width *= scale;
+    finalDim.height *= scale;
+  }
+  if (finalDim.height > rootSize.height.value) {
+    const scale = rootSize.height.value / finalDim.height;
+    finalDim.width *= scale;
+    finalDim.height *= scale;
+  }
+  console.log(finalDim, rootSize.width.value)
+  return finalDim;
+})
+
+//const actualWidth = computed(() => appState.sketch.aspectRatio < 1 ? Math.min(maxWidth.value / appState.sketch.aspectRatio, maxWidth.value) : maxWidth.value);
+// actualHeight = computed(() => actualWidth.value * appState.sketch.aspectRatio);
+const viewBox = computed(() => `0 0 1 ${appState.sketch.aspectRatio}`)
 
 const svg = useTemplateRef('svg')
 const newLine = reactive<number[]>([])
@@ -73,7 +94,6 @@ const updateMousePosition = (e: MouseEvent) => {
   mousePosition.y = clamp01(pos.y) * 2 - 1;
   timeLastMouseMove.value = Date.now();
 
-  console.log(timeLastMouseMove)
 }
 
 const eraseLine = (line: number, layer: string, cancel: boolean = false) => {
@@ -105,21 +125,24 @@ watch([deviceOrientation.rotationRate, deviceOrientation.isSupported, timeLastMo
 </script>
 
 <template>
-  <svg ref="svg" class="canvas" :viewBox="viewBox" :width="actualWidth" :height="actualHeight"
-    @pointerdown="pointerDown" :style="{ aspectRatio: appState.sketch.aspectRatio }">
-    <g v-for="layer in appState.sketch.frames" :style="{
-      transformOrigin: ` 50% 50%`, transform: ` scale(${(1 +
-        Math.abs(layer.position * actualStrength * 2))})translate(${actualStrength * mousePosition.x * layer.position}px,
+  <div class="root" ref="root">
+    <svg ref="svg" class="canvas" :viewBox="viewBox" :width="actualDimension.width" :height="actualDimension.height"
+      @pointerdown="pointerDown" :style="{ aspectRatio: appState.sketch.aspectRatio }">
+      <g v-for="layer in appState.sketch.frames" :style="{
+        transformOrigin: ` 50% 50%`, transform: ` scale(${(1 +
+          Math.abs(layer.position * actualStrength * 2))})translate(${actualStrength * mousePosition.x * layer.position}px,
       ${actualStrength * mousePosition.y * layer.position}px)`
-    }">
-      <path v-for="(line, lineIndex) in layer.lines" @click="eraseLine(lineIndex, layer.id)"
-        @pointerenter="eraseLine(lineIndex, layer.id, !isMouseDown)" :d="pathToSVG(line.points)" fill="none"
-        :stroke="line.color" :stroke-width="line.weight" stroke-linecap="round" stroke-linejoin="round" />
-    </g>
-    <path :d="pathToSVG(newLine)" fill="none" :stroke="appState.color" :stroke-width="appState.lineWeight"
-      stroke-linecap="round" stroke-linejoin="round"></path>
+      }">
+        <path v-for="(line, lineIndex) in layer.lines" @click="eraseLine(lineIndex, layer.id)"
+          @pointerenter="eraseLine(lineIndex, layer.id, !isMouseDown)" :d="pathToSVG(line.points)" fill="none"
+          :stroke="line.color" :stroke-width="line.weight" stroke-linecap="round" stroke-linejoin="round" />
+      </g>
+      <path :d="pathToSVG(newLine)" fill="none" :stroke="appState.color" :stroke-width="appState.lineWeight"
+        stroke-linecap="round" stroke-linejoin="round"></path>
 
-  </svg>
+    </svg>
+  </div>
+
 
 </template>
 
@@ -128,5 +151,20 @@ watch([deviceOrientation.rotationRate, deviceOrientation.isSupported, timeLastMo
   border: 2px solid var(--gray-900);
   background:
     repeating-conic-gradient(#80808088 0 25%, #0000 0 50%) 50% / 32px 32px;
+}
+
+.root {
+  flex: 1 1 600px;
+  overflow: auto;
+  display: flex;
+  justify-self: stretch;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 400px) {
+  .root {
+    flex-basis: 1px;
+  }
 }
 </style>
