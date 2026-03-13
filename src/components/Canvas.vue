@@ -2,8 +2,7 @@
 import { computed, reactive, ref, useTemplateRef, watch } from 'vue'
 import { useAppState } from '../AppState';
 import { clamp, clamp01, getPointerPositionRelative, optimizePoints, pathToSVG } from '../utils';
-import { useDeviceMotion, useDeviceOrientation, useEventListener, useWindowSize } from '@vueuse/core';
-import { time } from 'console';
+import { useDeviceMotion, useEventListener, useWindowSize } from '@vueuse/core';
 
 const EFFECT_STRENGTH = 0.1;
 const SCREEN_DIMENSION = 600;
